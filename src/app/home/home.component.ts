@@ -6,9 +6,12 @@ import { HttpClient } from '@angular/common/http';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { CourseDialogComponent } from '../course-dialog/course-dialog.component';
 import { CoursesService } from '../services/courses.service';
+import { LoadingService } from '../services/loading.service';
+import { messageService } from '../services/message.service';
+import { courseStoreService } from '../services/courseStore.service';
 
 
-@Component({
+@Component({  
   selector: 'home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
@@ -20,7 +23,8 @@ export class HomeComponent implements OnInit {
   advancedCourses$: Observable<Course[]>;
 
 
-  constructor(private courseServices: CoursesService) {
+  constructor(private courseStoreService: courseStoreService
+   ) {
 
   }
 
@@ -30,19 +34,11 @@ export class HomeComponent implements OnInit {
   }
 
   reloadCourses() {
-    
-    const courses$ = this.courseServices.loadAllCourses().pipe(
-      map(courses => courses.sort(sortCoursesBySeqNo))
-    );
-    this.beginnerCourses$ = courses$
-      .pipe(
-        map(courses => courses.filter(courses => courses.category == "BEGINNER"))
-      );
 
-      this.advancedCourses$ = courses$
-      .pipe(
-        map(courses => courses.filter(courses => courses.category == "ADVANCED"))
-      );
+    this.beginnerCourses$ = this.courseStoreService.filterByCategory("BEGINNER");
+
+    this.advancedCourses$ = this.courseStoreService.filterByCategory("ADVANCED")
+     
 
   }
 
